@@ -1,18 +1,18 @@
 from logging import info, error, debug
-import pandas as pd    
+
 from google.cloud import bigquery
 
 from .retry import default_retry
 
-class BqRowIterator:
+class BqRowsIterator:
     client = None
 
-    def __init__(self,  batch_size=10000, client=None):
+    def __init__(self, client, batch_size):
         self.batch_size = batch_size
         self.initialized = False
         self.nth_batch = 0
         if self.__class__.client is None:
-            self.__class__.client = bigquery.Client() if (client is None)  else client
+            self.__class__.client = client
         
     def __iter__(self):
         return self
@@ -37,7 +37,6 @@ class BqRowIterator:
             batch number :{self.nth_batch} with page_token :{page_token or "None"}"""
         )
         self.row_iterable = self.list_next_rows(page_token)
-        #self.row_iterator = iter(self.row_iterable)
         self.nth_batch += 1
 
     @classmethod
@@ -49,15 +48,13 @@ class BqRowIterator:
 
     def initialize(self):
         self.row_iterable = self.list_next_rows()
-        #self.row_iterator = iter(self.row_iterable)
         self.initialized = True
 
 
-class BqQueryRowIterator(BqRowIterator):
-
-    def __init__(self,  query, batch_size=10000, client=None):
+class BqQueryRowsIterator(BqRowsIterator):
+    def __init__(self, client, query, batch_size):
         self.query = query
-        super().__init__(batch_size,  client=client)
+        super().__init__(client, batch_size)
         self.query_job = self.client.query(query)
 
     def list_next_rows(self, page_token= None):
@@ -67,11 +64,11 @@ class BqQueryRowIterator(BqRowIterator):
             page_token=page_token,
         )
 
-class BqTableRowIterator(BqRowIterator):
+class BqTableRowsIterator(BqRowsIterator):
 
-    def __init__(self, table_id, batch_size=10000, client=None):
+    def __init__(self, client, table_id, batch_size):
         self.table_id = table_id
-        super().__init__(batch_size=batch_size, client=client)
+        super().__init__(client, batch_size)
 
     def list_next_rows(self, page_token=None):
         try:
@@ -84,7 +81,7 @@ class BqTableRowIterator(BqRowIterator):
           error(f'something wrong happend : {e}')
           raise
 
-def bq_iterator(iterator, use_tqdm=False):
+def bq_iterator(iterator):
     from collections.abc import Iterable, Iterator
     from logging import info
 
@@ -94,4 +91,4 @@ def bq_iterator(iterator, use_tqdm=False):
         raise Exception(f"{type(iterator)} not iterable")
 
     while (el := next(iterator, None)) is not None:
-        yield [el.to_dataframe(progress_bar_type='tqdm' if use_tqdm else '')] 
+        yield el 
