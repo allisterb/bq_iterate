@@ -1,8 +1,5 @@
-
 from collections.abc import Iterable, Iterator
-
-from bq_iterate.config import logging
-
+from logging import info
 
 def batchify_iterator(iterator, batch_slice=100):
 
@@ -17,8 +14,8 @@ def batchify_iterator(iterator, batch_slice=100):
 
         batchify_iterator.batch_count += 1
 
-        logging.info(
-            f"""yielding the {batchify_iterator.batch_count}th batch
+        info(
+            f"""Yielding the {batchify_iterator.batch_count}th batch
             for a batch slice {batch_slice}"""
         )
         yield [el] + \

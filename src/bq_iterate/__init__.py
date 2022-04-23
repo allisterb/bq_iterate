@@ -1,5 +1,5 @@
-from bq_iterate.core import BqQueryRowIterator, BqTableRowIterator
-from bq_iterate.utils import batchify_iterator
+from .core import BqQueryRowIterator, BqTableRowIterator
+from .utils import batchify_iterator
 
 __version__ = "0.1.6"
 
