@@ -1,5 +1,5 @@
 from collections.abc import Iterable, Iterator
-from logging import info
+from logging import debug
 
 def batchify_iterator(iterator, batch_slice=100):
 
@@ -14,7 +14,7 @@ def batchify_iterator(iterator, batch_slice=100):
 
         batchify_iterator.batch_count += 1
 
-        info(
+        debug(
             f"""Yielding the {batchify_iterator.batch_count}th batch
             for a batch slice {batch_slice}"""
         )

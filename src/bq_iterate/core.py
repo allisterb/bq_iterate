@@ -70,16 +70,13 @@ class BqTableRowsIterator(BqRowsIterator):
         self.table_id = table_id
         super().__init__(client, batch_size)
 
-    def list_next_rows(self, page_token=None):
-        try:
-            return self.client.list_rows(
-                f"{self.table_id}",
-                max_results=self.batch_size,
-                page_token=page_token,
-            )
-        except Exception as e:
-          error(f'something wrong happend : {e}')
-          raise
+    def list_next_rows(self, page_token=None):      
+        return self.client.list_rows(
+            f"{self.table_id}",
+            max_results=self.batch_size,
+            page_token=page_token,
+        )
+  
 
 def bq_iterator(iterator):
     from collections.abc import Iterable, Iterator
