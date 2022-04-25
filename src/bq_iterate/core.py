@@ -50,7 +50,6 @@ class BqRowsIterator:
         self.row_iterable = self.list_next_rows()
         self.initialized = True
 
-
 class BqQueryRowsIterator(BqRowsIterator):
     def __init__(self, client, query, batch_size):
         self.query = query
@@ -65,7 +64,6 @@ class BqQueryRowsIterator(BqRowsIterator):
         )
 
 class BqTableRowsIterator(BqRowsIterator):
-
     def __init__(self, client, table_id, batch_size):
         self.table_id = table_id
         super().__init__(client, batch_size)
@@ -77,7 +75,6 @@ class BqTableRowsIterator(BqRowsIterator):
             page_token=page_token,
         )
   
-
 def bq_iterator(iterator):
     from collections.abc import Iterable, Iterator
     from logging import info
