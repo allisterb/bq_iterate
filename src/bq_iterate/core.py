@@ -2,7 +2,7 @@ from logging import info, error, debug
 
 from google.cloud import bigquery
 
-from .retry import default_retry
+#from .retry import default_retry
 
 class BqRowsIterator:
     client = None
@@ -27,7 +27,7 @@ class BqRowsIterator:
             self.call_next_batch()
             return self.row_iterable
 
-    @default_retry
+    
     def call_next_batch(self):
         page_token = (
             self.row_iterable.next_page_token if hasattr(self, "row_iterable") else None
